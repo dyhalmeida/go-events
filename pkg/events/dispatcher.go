@@ -3,6 +3,7 @@ package events
 import (
 	"errors"
 	"slices"
+	"sync"
 )
 
 var ErrHandlerAlreadyExists = errors.New("handler already exists")
@@ -45,9 +46,12 @@ func (dispatcher *EventDispatcher) Has(eventName string, handler EventHandlerInt
 
 func (dispatcher *EventDispatcher) Dispatch(event EventInterface) error {
 	if handlers, ok := dispatcher.handlers[event.GetName()]; ok {
+		wg := &sync.WaitGroup{}
 		for _, handler := range handlers {
-			handler.Handle(event)
+			wg.Add(1)
+			go handler.Handle(event, wg)
 		}
+		wg.Wait()
 	}
 
 	return nil
