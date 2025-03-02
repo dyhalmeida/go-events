@@ -28,7 +28,7 @@ Este repositório contém um exemplo de implementação de um sistema de eventos
 - **cmd/consumer/main.go**: Código do consumidor de mensagens RabbitMQ.
 - **pkg/events/dispatcher.go**: Implementação do despachante de eventos.
 - **pkg/events/dispatcher_test.go**: Testes para o despachante de eventos.
-- - **pkg/events/interfaces.go**: Interfaces para o despachante de eventos.
+- **pkg/events/interfaces.go**: Interfaces para o despachante de eventos.
 - **pkg/rabbitmq/rabbitmq.go**: Funções para interagir com o RabbitMQ.
 - **docs.md**: Explicação detalhada do código desse projeto.
 
