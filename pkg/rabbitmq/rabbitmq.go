@@ -15,9 +15,9 @@ func OpenChannel() (*amqp.Channel, error) {
 	return ch, nil
 }
 
-func Consumer(ch *amqp.Channel, out chan<- amqp.Delivery) error {
+func Consumer(ch *amqp.Channel, out chan<- amqp.Delivery, queueName string) error {
 	messages, err := ch.Consume(
-		"queue1",
+		queueName,
 		"go-consumer",
 		false,
 		false,

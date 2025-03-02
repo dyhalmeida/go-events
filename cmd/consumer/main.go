@@ -16,7 +16,7 @@ func main() {
 
 	messages := make(chan amqp.Delivery)
 
-	go rabbitmq.Consumer(ch, messages)
+	go rabbitmq.Consumer(ch, messages, "queue1")
 
 	for message := range messages {
 		fmt.Println(string(message.Body))
