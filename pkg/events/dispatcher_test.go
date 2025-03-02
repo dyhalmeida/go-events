@@ -1,6 +1,7 @@
 package events
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -30,7 +31,7 @@ type EventHandlerMock struct {
 	ID string
 }
 
-func (eventHandlerMock *EventHandlerMock) Handle(event EventInterface) {}
+func (eventHandlerMock *EventHandlerMock) Handle(event EventInterface, wg *sync.WaitGroup) {}
 
 type EventDispatcherSuiteTest struct {
 	suite.Suite
@@ -117,19 +118,28 @@ type EventHandlerMocked struct {
 	mock.Mock
 }
 
-func (EventHandlerMocked *EventHandlerMocked) Handle(event EventInterface) {
+func (EventHandlerMocked *EventHandlerMocked) Handle(event EventInterface, wg *sync.WaitGroup) {
 	EventHandlerMocked.Called(event)
+	wg.Done()
 }
 
 func (suite *EventDispatcherSuiteTest) TestEventDispatcher_Dispatch() {
-	eventHandlerMocked := &EventHandlerMocked{}
-	eventHandlerMocked.On("Handle", &suite.event1)
+	eventHandlerMocked1 := &EventHandlerMocked{}
+	eventHandlerMocked2 := &EventHandlerMocked{}
 
-	suite.eventDispatcher.Register(suite.event1.GetName(), eventHandlerMocked)
+	eventHandlerMocked1.On("Handle", &suite.event1)
+	eventHandlerMocked2.On("Handle", &suite.event1)
+
+	suite.eventDispatcher.Register(suite.event1.GetName(), eventHandlerMocked1)
+	suite.eventDispatcher.Register(suite.event1.GetName(), eventHandlerMocked2)
+
 	suite.eventDispatcher.Dispatch(&suite.event1)
 
-	eventHandlerMocked.AssertExpectations(suite.T())
-	eventHandlerMocked.AssertNumberOfCalls(suite.T(), "Handle", 1)
+	eventHandlerMocked1.AssertExpectations(suite.T())
+	eventHandlerMocked2.AssertExpectations(suite.T())
+
+	eventHandlerMocked1.AssertNumberOfCalls(suite.T(), "Handle", 1)
+	eventHandlerMocked2.AssertNumberOfCalls(suite.T(), "Handle", 1)
 }
 
 func (suite *EventDispatcherSuiteTest) TestEventDispatcher_Remove() {
