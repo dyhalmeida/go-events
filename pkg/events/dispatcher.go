@@ -52,3 +52,16 @@ func (dispatcher *EventDispatcher) Dispatch(event EventInterface) error {
 
 	return nil
 }
+
+func (dispatcher *EventDispatcher) Remove(eventName string, handler EventHandlerInterface) error {
+	if _, ok := dispatcher.handlers[eventName]; ok {
+		for index, handlerOnDispatcher := range dispatcher.handlers[eventName] {
+			if handlerOnDispatcher == handler {
+				dispatcher.handlers[eventName] = append(dispatcher.handlers[eventName][:index], dispatcher.handlers[eventName][index+1:]...)
+				return nil
+			}
+		}
+	}
+
+	return nil
+}
