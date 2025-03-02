@@ -28,3 +28,7 @@ func (dispatcher *EventDispatcher) Register(eventName string, handler EventHandl
 	dispatcher.handlers[eventName] = append(dispatcher.handlers[eventName], handler)
 	return nil
 }
+
+func (dispatcher *EventDispatcher) Clear() {
+	dispatcher.handlers = make(map[string][]EventHandlerInterface)
+}
