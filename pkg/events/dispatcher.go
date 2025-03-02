@@ -42,3 +42,13 @@ func (dispatcher *EventDispatcher) Has(eventName string, handler EventHandlerInt
 
 	return false
 }
+
+func (dispatcher *EventDispatcher) Dispatch(event EventInterface) error {
+	if handlers, ok := dispatcher.handlers[event.GetName()]; ok {
+		for _, handler := range handlers {
+			handler.Handle(event)
+		}
+	}
+
+	return nil
+}
