@@ -32,3 +32,13 @@ func (dispatcher *EventDispatcher) Register(eventName string, handler EventHandl
 func (dispatcher *EventDispatcher) Clear() {
 	dispatcher.handlers = make(map[string][]EventHandlerInterface)
 }
+
+func (dispatcher *EventDispatcher) Has(eventName string, handler EventHandlerInterface) bool {
+	_, ok := dispatcher.handlers[eventName]
+
+	if ok && slices.Contains(dispatcher.handlers[eventName], handler) {
+		return true
+	}
+
+	return false
+}
